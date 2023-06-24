@@ -8,7 +8,7 @@ use std::process::Command;
 // Upstream version and name of the tarball file in the vendor directory
 static WANDIO_VERSION: &str = "wandio-4.2.5-1";
 
-// Extract bgpstream source to the auto generated build output directory
+// Extract wandio source to the auto generated build output directory
 fn extract_wandio(build_output_dir: &str) -> std::io::Result<()> {
     Command::new("tar")
         .arg("-xf")
@@ -21,7 +21,7 @@ fn extract_wandio(build_output_dir: &str) -> std::io::Result<()> {
     Ok(())
 }
 
-// Extract bgpstream source to the auto generated build output directory
+// Run the bootstrap shell script that generates the configure script
 fn run_bootstrap(build_output_dir: &str) -> std::io::Result<()> {
     Command::new("sh")
         .current_dir(format!("{}/{WANDIO_VERSION}", build_output_dir))
@@ -37,10 +37,10 @@ fn main() -> std::io::Result<()> {
     let build_output_dir = env::var("OUT_DIR").unwrap();
 
     println!("about to run extract");
-    // Extract the bgpstream tar file, must be done before setting "libdir_path"
+    // Extract the wandio  tar file, must be done before setting "libdir_path"
     extract_wandio(&build_output_dir)?;
 
-    // Map the directory name where bgpstream has been extracted too
+    // Map the directory name where wandio has been extracted too
     let libdir_path = PathBuf::from(format!("{}/{WANDIO_VERSION}", build_output_dir))
         // Canonicalize the path as `rustc-link-search` requires an absolute
         // path.
@@ -56,7 +56,7 @@ fn main() -> std::io::Result<()> {
     conf.enable_static().disable_shared().with("http", None);
     conf.build();
 
-    // Map the directory where bgpstream's library's are located
+    // Map the directory where wandio's library's are located
     let wandio_libdir = format!("{build_output_dir}/{WANDIO_VERSION}/lib");
 
     // Generate the bindings
