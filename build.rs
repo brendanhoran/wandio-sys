@@ -53,7 +53,7 @@ fn main() -> std::io::Result<()> {
 
     // Run configure and make via the autotools crate
     let mut conf = Config::new(&libdir_path);
-    conf.enable_static().disable_shared().with("http", None);
+    conf.enable_static().disable_shared().insource(true).with("http", None);
     conf.build();
 
     // Map the directory where wandio's library's are located
@@ -76,8 +76,7 @@ fn main() -> std::io::Result<()> {
 
     // Regenerate if changed
     println!("cargo:rerun-if-changed=wrapper.h");
-    // Name of the library
-    //println!("cargo:rustc-link-lib=static=wandio");
+    println!("cargo:rustc-link-lib=static=wandio");
     println!("cargo:rustc-link-search={wandio_libdir}");
 
     Ok(())

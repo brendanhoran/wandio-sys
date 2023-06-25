@@ -8,7 +8,7 @@ readme = "README.md"
 license = "BSD-3-Clause"
 documentation = "https://github.com/brendanhoran/wandio-sys/blob/main/README.md"
 repository = "https://github.com/brendanhoran/wandio-sys"
-
+links = "wandio"
 
 [dependencies]
 
