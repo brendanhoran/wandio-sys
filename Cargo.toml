@@ -11,10 +11,9 @@ repository = "https://github.com/brendanhoran/wandio-sys"
 links = "wandio"
 
 [dependencies]
-curl-sys = "0.4.63"
 
 [build-dependencies]
 bindgen = "0.65.1"
 autotools = "0.2"
-curl-sys = "0.4.63"
+pkg-config = "0.3.27"
 

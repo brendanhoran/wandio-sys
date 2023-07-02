@@ -1,5 +1,5 @@
 extern crate bindgen;
-extern crate curl_sys;
+extern crate pkg_config;
 
 use autotools::Config;
 use std::env;
@@ -40,6 +40,8 @@ fn main() -> std::io::Result<()> {
     println!("about to run extract");
     // Extract the wandio  tar file, must be done before setting "libdir_path"
     extract_wandio(&build_output_dir)?;
+
+    pkg_config::probe_library("libcurl").unwrap();
 
     // Map the directory name where wandio has been extracted too
     let libdir_path = PathBuf::from(format!("{}/{WANDIO_VERSION}", build_output_dir))
