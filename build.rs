@@ -1,4 +1,5 @@
 extern crate bindgen;
+extern crate curl_sys;
 
 use autotools::Config;
 use std::env;
