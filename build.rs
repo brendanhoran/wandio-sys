@@ -1,5 +1,5 @@
 extern crate bindgen;
-extern crate pkg_config;
+extern crate curl_sys;
 
 use autotools::Config;
 use std::env;
@@ -37,11 +37,12 @@ fn main() -> std::io::Result<()> {
     // Map the Rust auto generated build output directory to a friendly name
     let build_output_dir = env::var("OUT_DIR").unwrap();
 
+    // Map the Rust auto generated build directory for curl to a friendly name
+    let curl_root = env::var("DEP_CURL_ROOT").unwrap();
+
     println!("about to run extract");
     // Extract the wandio  tar file, must be done before setting "libdir_path"
     extract_wandio(&build_output_dir)?;
-
-    pkg_config::probe_library("libcurl").unwrap();
 
     // Map the directory name where wandio has been extracted too
     let libdir_path = PathBuf::from(format!("{}/{WANDIO_VERSION}", build_output_dir))
@@ -50,13 +51,18 @@ fn main() -> std::io::Result<()> {
         .canonicalize()
         .expect("cannot canonicalize path");
 
-    println!("About to run bootstrap");
+    // Run the build bootstrap
     run_bootstrap(&build_output_dir)?;
-    println!("{}", build_output_dir);
 
     // Run configure and make via the autotools crate
     let mut conf = Config::new(&libdir_path);
-    conf.enable_static().disable_shared().insource(true).with("http", None);
+    conf.enable_static()
+        .cflag("-DCURL_STATICLIB")
+        .cflag(format!("-I{curl_root}/lib/"))
+        .ldflag(format!("-L{curl_root}/lib/"))
+        .disable_shared()
+        .insource(true)
+        .with("http", None);
     conf.build();
 
     // Map the directory where wandio's library's are located
