@@ -58,8 +58,8 @@ fn main() -> std::io::Result<()> {
     let mut conf = Config::new(&libdir_path);
     conf.enable_static()
         .cflag("-DCURL_STATICLIB")
-        .cflag(format!("-I{curl_root}/build/curl/lib/"))
-        .ldflag(format!("-L{curl_root}/build/curl/lib/"))
+        .cflag(format!("-I{curl_root}/include/curl"))
+        .ldflag(format!("-L{curl_root}/build/curl/lib"))
         .disable_shared()
         .insource(true)
         .with("http", None);
