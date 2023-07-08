@@ -33,6 +33,23 @@ fn run_bootstrap(build_output_dir: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+fn apply_source_patch(
+    build_output_dir: &str,
+    source_file: &str,
+    patch_file: &str,
+) -> std::io::Result<()> {
+    Command::new("patch")
+        .arg(format!(
+            "{}/{WANDIO_VERSION}/{}",
+            build_output_dir, source_file
+        ))
+        .arg(format!("vendor/{}", patch_file))
+        .status()
+        .unwrap();
+
+    Ok(())
+}
+
 fn main() -> std::io::Result<()> {
     // Map the Rust auto generated build output directory to a friendly name
     let build_output_dir = env::var("OUT_DIR").unwrap();
@@ -40,7 +57,6 @@ fn main() -> std::io::Result<()> {
     // Map the Rust auto generated build directory for curl to a friendly name
     let curl_root = env::var("DEP_CURL_ROOT").unwrap();
 
-    println!("about to run extract");
     // Extract the wandio  tar file, must be done before setting "libdir_path"
     extract_wandio(&build_output_dir)?;
 
@@ -50,6 +66,22 @@ fn main() -> std::io::Result<()> {
         // path.
         .canonicalize()
         .expect("cannot canonicalize path");
+
+    apply_source_patch(
+        &build_output_dir,
+        "lib/swift-support/keystone.c",
+        "keystone_curl_include.patch",
+    )?;
+    apply_source_patch(
+        &build_output_dir,
+        "lib/curl-helper.c",
+        "curl_helper_include.patch",
+    )?;
+    apply_source_patch(
+        &build_output_dir,
+        "lib/ior-http.c",
+        "iorhttp_curl_include.patch",
+    )?;
 
     // Run the build bootstrap
     run_bootstrap(&build_output_dir)?;
@@ -73,6 +105,8 @@ fn main() -> std::io::Result<()> {
         .header("wrapper.h")
         .clang_arg(format!("-I{wandio_libdir}/"))
         .clang_arg(format!("-I{wandio_libdir}/.libs/"))
+        .clang_arg(format!("-I{curl_root}/include/curl"))
+        .clang_arg(format!("-L{curl_root}/build/curl/lib"))
         .generate_comments(false)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .generate()
