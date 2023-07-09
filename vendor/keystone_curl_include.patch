@@ -1,0 +1,11 @@
+--- lib/swift-support/keystone.c.org	2023-07-08 16:37:39.780659978 +1000
++++ lib/swift-support/keystone.c	2023-07-08 16:38:29.149024131 +1000
+@@ -32,7 +32,7 @@
+ #include "jsmn_utils.h"
+ #include "swift-support/keystone.h"
+ #include <assert.h>
+-#include <curl/curl.h>
++#include <curl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>

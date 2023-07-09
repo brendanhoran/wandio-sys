@@ -1,0 +1,11 @@
+--- lib/ior-http.c.org	2023-07-08 16:37:48.009723590 +1000
++++ lib/ior-http.c	2023-07-08 16:38:49.140160573 +1000
+@@ -33,7 +33,7 @@
+ 
+ #include "config.h"
+ #include <assert.h>
+-#include <curl/curl.h>
++#include <curl.h>
+ #include <pthread.h>
+ #include <stdlib.h>
+ #include <string.h>
